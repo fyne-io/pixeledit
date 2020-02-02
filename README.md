@@ -2,5 +2,5 @@
 
 A pixel based image editor built using Fyne.
 
-![](Screenshot.png)
+<img src="Screenshot.png" width="618" />
 
