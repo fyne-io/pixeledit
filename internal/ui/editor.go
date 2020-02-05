@@ -110,7 +110,7 @@ func (e *editor) pixAt(x, y int) []uint8 {
 	iy := y / e.zoom
 
 	if ix >= e.img.Bounds().Dx() || iy >= e.img.Bounds().Dy() {
-		return []uint8{0, 0, 0, 128}
+		return []uint8{0, 0, 0, 0}
 	}
 
 	return colorToBytes(e.img.At(ix, iy))
