@@ -115,3 +115,18 @@ func TestEditor_fixEncoding(t *testing.T) {
 	fixed := fixEncoding(nonRGBA)
 	assert.Equal(t, image.Rect(0, 0, size, size), fixed.Bounds())
 }
+
+func TestEditor_isSupported(t *testing.T) {
+	e := NewEditor().(*editor)
+
+	assert.True(t, e.isSupported("test.png"))
+	assert.False(t, e.isPNG("test.jpg"))
+}
+
+func TestEditor_isPNG(t *testing.T) {
+	e := NewEditor().(*editor)
+
+	assert.True(t, e.isPNG("test.png"))
+	assert.True(t, e.isPNG("BIG.PNG"))
+	assert.False(t, e.isPNG("wrong.ping"))
+}

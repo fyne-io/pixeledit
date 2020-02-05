@@ -177,7 +177,7 @@ func (e *editor) Save() {
 		return
 	}
 
-	if strings.LastIndex(e.file, "png") != len(e.file)-3 {
+	if !e.isSupported(e.file) {
 		fyne.LogError("Save only supports PNG", nil)
 		return
 	}
@@ -186,10 +186,20 @@ func (e *editor) Save() {
 		fyne.LogError("Error opening file to replace", err)
 		return
 	}
-	err = png.Encode(fd, e.img)
+	if e.isPNG(e.file) {
+		err = png.Encode(fd, e.img)
+	}
 	if err != nil {
 		fyne.LogError("Could not encode image", err)
 	}
+}
+
+func (e *editor) isSupported(path string) bool {
+	return e.isPNG(path)
+}
+
+func (e *editor) isPNG(path string) bool {
+	return strings.LastIndex(strings.ToLower(path), "png") == len(path)-3
 }
 
 // NewEditor creates a new pixel editor that is ready to have a file loaded
