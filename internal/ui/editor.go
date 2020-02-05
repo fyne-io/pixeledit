@@ -146,23 +146,22 @@ func (e *editor) LoadFile(file string) {
 	read, err := os.OpenFile(file, os.O_RDONLY, 0)
 	if err != nil {
 		fyne.LogError("Unable to load image", err)
-	} else {
-		img, _, err := image.Decode(read)
-		if err != nil {
-			fyne.LogError("Unable to load image", err)
-		} else {
-			e.file = file
-			e.img = fixEncoding(img)
-		}
+		e.status.SetText(err.Error())
+		return
 	}
 
+	img, _, err := image.Decode(read)
 	if err != nil {
+		fyne.LogError("Unable to decode image", err)
 		e.status.SetText(err.Error())
-	} else {
-		e.status.SetText(fmt.Sprintf("File: %s | Width: %d | Height: %d",
-			filepath.Base(file), e.img.Bounds().Dx(), e.img.Bounds().Dy()))
-		e.updateSizes()
+		return
 	}
+
+	e.file = file
+	e.img = fixEncoding(img)
+	e.status.SetText(fmt.Sprintf("File: %s | Width: %d | Height: %d",
+		filepath.Base(file), e.img.Bounds().Dx(), e.img.Bounds().Dy()))
+	e.updateSizes()
 }
 
 func (e *editor) Reload() {
