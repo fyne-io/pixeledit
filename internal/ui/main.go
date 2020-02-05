@@ -27,7 +27,7 @@ func buildToolbar(e api.Editor) fyne.CanvasObject {
 	return widget.NewToolbar(
 		&widget.ToolbarAction{Icon: theme.CancelIcon(), OnActivated: t.toolbarReset},
 		&widget.ToolbarAction{Icon: theme.DocumentSaveIcon(), OnActivated: t.toolbarSave},
-		)
+	)
 }
 
 // BuildUI creates the main window of our pixel edit application
