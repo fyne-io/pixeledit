@@ -14,15 +14,23 @@ type testEditor struct {
 	fg color.Color
 }
 
-func (t testEditor) BuildUI() fyne.CanvasObject {
+func (t *testEditor) BuildUI() fyne.CanvasObject {
 	return widget.NewLabel("Not used")
 }
 
-func (t testEditor) LoadFile(string) {
+func (t *testEditor) LoadFile(string) {
 	// no-op
 }
 
-func (t testEditor) PixelColor(x, y int) color.Color {
+func (t *testEditor) Reload() {
+	t.img = testImage()
+}
+
+func (t *testEditor) Save() {
+	//no-op
+}
+
+func (t *testEditor) PixelColor(x, y int) color.Color {
 	return t.img.At(x, y)
 }
 
@@ -32,7 +40,7 @@ func colorToBytes(col color.Color) []uint8 {
 	return []uint8{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8), uint8(a >> 8)}
 }
 
-func (t testEditor) SetPixelColor(x, y int, col color.Color) {
+func (t *testEditor) SetPixelColor(x, y int, col color.Color) {
 	i := (y*t.img.Bounds().Dx() + x) * 4
 	rgba := colorToBytes(col)
 	t.img.Pix[i] = rgba[0]
@@ -49,9 +57,13 @@ func (t *testEditor) SetFGColor(col color.Color) {
 	t.fg = col
 }
 
+func testImage() *image.RGBA {
+	return image.NewRGBA(image.Rect(0, 0, 4, 4))
+}
+
 func newTestEditor() *testEditor {
 	return &testEditor{
-		img: image.NewRGBA(image.Rect(0, 0, 4, 4)),
+		img: testImage(),
 		fg:  color.Black,
 	}
 }

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	_ "image/gif" // support gif images
-	_ "image/png" // support png imaged
+	"image/png"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
@@ -24,6 +24,7 @@ type editor struct {
 	cacheWidth, cacheHeight int
 	fgPreview               *canvas.Rectangle
 
+	file string
 	img  *image.RGBA
 	zoom int
 	fg   color.Color
@@ -142,7 +143,7 @@ func fixEncoding(img image.Image) *image.RGBA {
 }
 
 func (e *editor) LoadFile(file string) {
-	read, err := os.OpenFile(file, 0, 0)
+	read, err := os.OpenFile(file, os.O_RDONLY, 0)
 	if err != nil {
 		fyne.LogError("Unable to load image", err)
 	} else {
@@ -150,6 +151,7 @@ func (e *editor) LoadFile(file string) {
 		if err != nil {
 			fyne.LogError("Unable to load image", err)
 		} else {
+			e.file = file
 			e.img = fixEncoding(img)
 		}
 	}
@@ -163,9 +165,38 @@ func (e *editor) LoadFile(file string) {
 	}
 }
 
+func (e *editor) Reload() {
+	if e.file == "" {
+		return
+	}
+
+	e.LoadFile(e.file)
+}
+
+func (e *editor) Save() {
+	if e.file == "" {
+		return
+	}
+
+	if strings.LastIndex(e.file, "png") != len(e.file)-3 {
+		fyne.LogError("Save only supports PNG", nil)
+		return
+	}
+	fd, err := os.OpenFile(e.file, os.O_WRONLY, 0)
+	if err != nil {
+		fyne.LogError("Error opening file to replace", err)
+		return
+	}
+	err = png.Encode(fd, e.img)
+	if err != nil {
+		fyne.LogError("Could not encode image", err)
+	}
+}
+
 // NewEditor creates a new pixel editor that is ready to have a file loaded
 func NewEditor() api.Editor {
-	edit := &editor{zoom: 1, fgPreview: canvas.NewRectangle(color.Black), status: newStatusBar()}
+	fgCol := color.Black
+	edit := &editor{zoom: 1, fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), status: newStatusBar()}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit
