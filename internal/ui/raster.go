@@ -48,12 +48,12 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 
 func (r *interactiveRaster) locationForPosition(pos fyne.Position) (int, int) {
 	c := fyne.CurrentApp().Driver().CanvasForObject(r.img)
-	scale := float32(1.0)
+	x, y := pos.X, pos.Y
 	if c != nil {
-		scale = c.Scale()
+		x, y = c.PixelCoordinateForPosition(pos)
 	}
 
-	return int(float32(pos.X)*scale) / r.edit.zoom, int(float32(pos.Y)*scale) / r.edit.zoom
+	return x / r.edit.zoom, y / r.edit.zoom
 }
 
 func newInteractiveRaster(edit *editor) *interactiveRaster {
