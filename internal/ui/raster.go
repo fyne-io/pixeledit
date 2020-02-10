@@ -18,6 +18,15 @@ type interactiveRaster struct {
 }
 
 func (r *interactiveRaster) SetMinSize(size fyne.Size) {
+	pixWidth, _ := r.locationForPosition(fyne.NewPos(size.Width, size.Height))
+	scale := float32(1.0)
+	c := fyne.CurrentApp().Driver().CanvasForObject(r.img)
+	if c != nil {
+		scale = c.Scale()
+	}
+
+	texScale := float32(pixWidth) / float32(size.Width) * float32(r.edit.zoom) / scale
+	size = fyne.NewSize(int(float32(size.Width)/texScale), int(float32(size.Height)/texScale))
 	r.min = size
 	r.Resize(size)
 }
