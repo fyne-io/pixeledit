@@ -90,6 +90,9 @@ func (e *editor) draw(w, h int) image.Image {
 }
 
 func (e *editor) updateSizes() {
+	if e.img == nil {
+		return
+	}
 	e.cacheWidth = e.img.Bounds().Dx() * e.zoom
 	e.cacheHeight = e.img.Bounds().Dy() * e.zoom
 

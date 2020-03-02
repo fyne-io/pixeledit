@@ -40,7 +40,7 @@ func (r *interactiveRaster) CreateRenderer() fyne.WidgetRenderer {
 }
 
 func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
-	if r.edit.tool == nil {
+	if r.edit.tool == nil || r.edit.img == nil {
 		return
 	}
 
