@@ -1,3 +1,8 @@
 .idea/
+.DS_Store
+
 pixeledit
+pixeledit.app
+pixeledit.exe
+pixeledit.tar.gz
 
