@@ -6,6 +6,7 @@ import (
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
+	"fyne.io/fyne/storage"
 
 	"github.com/fyne-io/pixeledit/internal/api"
 	"github.com/fyne-io/pixeledit/internal/ui"
@@ -17,7 +18,13 @@ func loadFileArgs(e api.Editor) {
 	}
 
 	time.Sleep(time.Second / 3) // wait for us to be shown before loading so scales are correct
-	e.LoadFile(os.Args[1])
+	uriStr := "file://" + os.Args[1]
+	read, err := storage.OpenFileFromURI(storage.NewURI(uriStr))
+	if err != nil {
+		fyne.LogError("Unable to open file \""+os.Args[1]+"\"", err)
+		return
+	}
+	e.LoadFile(read)
 }
 
 func main() {

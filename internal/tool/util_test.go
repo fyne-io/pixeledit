@@ -18,7 +18,7 @@ func (t *testEditor) BuildUI() fyne.CanvasObject {
 	return widget.NewLabel("Not used")
 }
 
-func (t *testEditor) LoadFile(string) {
+func (t *testEditor) LoadFile(fyne.URIReadCloser) {
 	// no-op
 }
 

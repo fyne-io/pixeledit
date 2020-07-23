@@ -8,13 +8,37 @@ import (
 	"path/filepath"
 	"testing"
 
+	"fyne.io/fyne"
+	"fyne.io/fyne/storage"
 	_ "fyne.io/fyne/test" // load a test application
 
 	"github.com/stretchr/testify/assert"
 )
 
-func testFile(name string) string {
-	return filepath.Join(".", "testdata", name+".png")
+func uriForTestFile(name string) fyne.URI {
+	path := filepath.Join(".", "testdata", name+".png")
+
+	return storage.NewURI("file://" + path)
+}
+
+func testFile(name string) fyne.URIReadCloser {
+	read, err := storage.OpenFileFromURI(uriForTestFile(name))
+	if err != nil {
+		fyne.LogError("Unable to open file \""+name+"\"", err)
+		return nil
+	}
+
+	return read
+}
+
+func testFileWrite(name string) fyne.URIWriteCloser {
+	write, err := storage.SaveFileToURI(uriForTestFile(name))
+	if err != nil {
+		fyne.LogError("Unable to save file \""+name+"\"", err)
+		return nil
+	}
+
+	return write
 }
 
 func TestEditor_LoadFile(t *testing.T) {
@@ -43,23 +67,24 @@ func TestEditor_Reset(t *testing.T) {
 
 func TestEditor_Save(t *testing.T) {
 	origFile := testFile("8x8")
-	file := testFile("8x8-tmp")
-	content, err := ioutil.ReadFile(origFile)
+	outFile := testFileWrite("8x8-tmp")
+	content, err := ioutil.ReadAll(origFile)
 	if err != nil {
 		t.Error("Failed to read test file")
 	}
-	err = ioutil.WriteFile(file, content, 0644)
+	_, err = outFile.Write([]byte(content))
 	if err != nil {
 		t.Error("Failed to write temporary file")
 	}
 	defer func() {
-		err = os.Remove(file)
+		err = os.Remove(outFile.URI().String()[7:])
 		if err != nil {
 			t.Error("Failed to remove temporary file")
 		}
 	}()
 
 	e := NewEditor()
+	file := testFile("8x8-tmp")
 	e.LoadFile(file)
 
 	assert.Equal(t, color.RGBA{A: 255}, e.PixelColor(0, 0))

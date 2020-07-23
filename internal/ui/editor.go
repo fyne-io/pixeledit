@@ -5,12 +5,12 @@ import (
 	"image"
 	"image/color"
 	"image/png"
-	"os"
 	"path/filepath"
 	"strings"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/storage"
 	"fyne.io/fyne/widget"
 	"golang.org/x/image/draw"
 
@@ -24,7 +24,7 @@ type editor struct {
 	cacheWidth, cacheHeight int
 	fgPreview               *canvas.Rectangle
 
-	file string
+	uri  string
 	img  *image.RGBA
 	zoom int
 	fg   color.Color
@@ -145,14 +145,8 @@ func fixEncoding(img image.Image) *image.RGBA {
 	return newImg
 }
 
-func (e *editor) LoadFile(file string) {
-	read, err := os.OpenFile(file, os.O_RDONLY, 0)
-	if err != nil {
-		fyne.LogError("Unable to load image", err)
-		e.status.SetText(err.Error())
-		return
-	}
-
+func (e *editor) LoadFile(read fyne.URIReadCloser) {
+	defer read.Close()
 	img, _, err := image.Decode(read)
 	if err != nil {
 		fyne.LogError("Unable to decode image", err)
@@ -160,37 +154,45 @@ func (e *editor) LoadFile(file string) {
 		return
 	}
 
-	e.file = file
+	e.uri = read.URI().String()
 	e.img = fixEncoding(img)
 	e.status.SetText(fmt.Sprintf("File: %s | Width: %d | Height: %d",
-		filepath.Base(file), e.img.Bounds().Dx(), e.img.Bounds().Dy()))
+		filepath.Base(read.URI().String()), e.img.Bounds().Dx(), e.img.Bounds().Dy()))
 	e.updateSizes()
 }
 
 func (e *editor) Reload() {
-	if e.file == "" {
+	if e.uri == "" {
 		return
 	}
 
-	e.LoadFile(e.file)
+	read, err := storage.OpenFileFromURI(storage.NewURI(e.uri))
+	if err != nil {
+		fyne.LogError("Unable to open file \""+e.uri+"\"", err)
+		return
+	}
+	e.LoadFile(read)
 }
 
 func (e *editor) Save() {
-	if e.file == "" {
+	if e.uri == "" {
 		return
 	}
 
-	if !e.isSupported(e.file) {
+	uri := storage.NewURI(e.uri)
+	if !e.isSupported(uri.Extension()) {
 		fyne.LogError("Save only supports PNG", nil)
 		return
 	}
-	fd, err := os.OpenFile(e.file, os.O_WRONLY, 0)
+	write, err := storage.SaveFileToURI(uri)
 	if err != nil {
 		fyne.LogError("Error opening file to replace", err)
 		return
 	}
-	if e.isPNG(e.file) {
-		err = png.Encode(fd, e.img)
+
+	defer write.Close()
+	if e.isPNG(uri.Extension()) {
+		err = png.Encode(write, e.img)
 	}
 	if err != nil {
 		fyne.LogError("Could not encode image", err)
