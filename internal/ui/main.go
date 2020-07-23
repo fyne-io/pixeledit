@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fyne.io/fyne"
+	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
@@ -18,7 +19,15 @@ func (t *toolbar) toolbarSave() {
 }
 
 func (t *toolbar) toolbarReset() {
-	t.edit.Reload()
+	win := fyne.CurrentApp().Driver().AllWindows()[0]
+	dialog.ShowConfirm("Reset content?", "Are you sure you want to re-load the image?",
+		func(ok bool) {
+			if !ok {
+				return
+			}
+
+			t.edit.Reload()
+		}, win)
 }
 
 func buildToolbar(e api.Editor) fyne.CanvasObject {
