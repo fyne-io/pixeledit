@@ -192,13 +192,22 @@ func (e *editor) Save() {
 		return
 	}
 
+	e.saveToWriter(write)
+}
+
+func (e *editor) saveToWriter(write fyne.URIWriteCloser) {
 	defer write.Close()
-	if e.isPNG(uri.Extension()) {
-		err = png.Encode(write, e.img)
+	if e.isPNG(write.URI().Extension()) {
+		err := png.Encode(write, e.img)
+
+		if err != nil {
+			fyne.LogError("Could not encode image", err)
+		}
 	}
-	if err != nil {
-		fyne.LogError("Could not encode image", err)
-	}
+}
+
+func (e *editor) SaveAs(writer fyne.URIWriteCloser) {
+	e.saveToWriter(writer)
 }
 
 func (e *editor) isSupported(path string) bool {

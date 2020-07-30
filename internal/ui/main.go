@@ -42,6 +42,22 @@ func (e *editor) fileSave() {
 	e.Save()
 }
 
+func (e *editor) fileSaveAs() {
+	open := dialog.NewFileSave(func(write fyne.URIWriteCloser, err error) {
+		if err != nil {
+			dialog.ShowError(err, e.win)
+			return
+		}
+		if write == nil {
+			return
+		}
+
+		e.SaveAs(write)
+	}, e.win)
+
+	open.SetFilter(storage.NewExtensionFileFilter([]string{".png"}))
+	open.Show()
+}
 
 func buildToolbar(e *editor) fyne.CanvasObject {
 	return widget.NewToolbar(
@@ -59,6 +75,7 @@ func (e *editor) buildMainMenu() *fyne.MainMenu {
 		fyne.NewMenuItem("Open ...", e.fileOpen),
 		fyne.NewMenuItem("Reset ...", e.fileReset),
 		fyne.NewMenuItem("Save", e.fileSave),
+		fyne.NewMenuItem("Save As ...", e.fileSaveAs),
 	)
 
 	return fyne.NewMainMenu(file)

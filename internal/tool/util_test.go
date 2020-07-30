@@ -30,6 +30,10 @@ func (t *testEditor) Save() {
 	//no-op
 }
 
+func (t *testEditor) SaveAs(fyne.URIWriteCloser) {
+	//no-op
+}
+
 func (t *testEditor) PixelColor(x, y int) color.Color {
 	return t.img.At(x, y)
 }
