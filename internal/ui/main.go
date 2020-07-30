@@ -7,33 +7,26 @@ import (
 	"fyne.io/fyne/storage"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
-
-	"github.com/fyne-io/pixeledit/internal/api"
 )
 
-type toolbar struct {
-	edit api.Editor
-}
-
-func (t *toolbar) toolbarOpen() {
-	win := fyne.CurrentApp().Driver().AllWindows()[0]
+func (e *editor) fileOpen() {
 	open := dialog.NewFileOpen(func(read fyne.URIReadCloser, err error) {
 		if err != nil {
-			dialog.ShowError(err, win)
+			dialog.ShowError(err, e.win)
 			return
 		}
 		if read == nil {
 			return
 		}
 
-		t.edit.LoadFile(read)
-	}, win)
+		e.LoadFile(read)
+	}, e.win)
 
 	open.SetFilter(storage.NewExtensionFileFilter([]string{".png"}))
 	open.Show()
 }
 
-func (t *toolbar) toolbarReset() {
+func (e *editor) fileReset() {
 	win := fyne.CurrentApp().Driver().AllWindows()[0]
 	dialog.ShowConfirm("Reset content?", "Are you sure you want to re-load the image?",
 		func(ok bool) {
@@ -41,29 +34,43 @@ func (t *toolbar) toolbarReset() {
 				return
 			}
 
-			t.edit.Reload()
+			e.Reload()
 		}, win)
 }
 
-func (t *toolbar) toolbarSave() {
-	t.edit.Save()
+func (e *editor) fileSave() {
+	e.Save()
 }
 
-func buildToolbar(e api.Editor) fyne.CanvasObject {
-	t := &toolbar{edit: e}
 
+func buildToolbar(e *editor) fyne.CanvasObject {
 	return widget.NewToolbar(
-		&widget.ToolbarAction{Icon: theme.FolderOpenIcon(), OnActivated: t.toolbarOpen},
-		&widget.ToolbarAction{Icon: theme.CancelIcon(), OnActivated: t.toolbarReset},
-		&widget.ToolbarAction{Icon: theme.DocumentSaveIcon(), OnActivated: t.toolbarSave},
+		&widget.ToolbarAction{Icon: theme.FolderOpenIcon(), OnActivated: e.fileOpen},
+		&widget.ToolbarAction{Icon: theme.CancelIcon(), OnActivated: e.fileReset},
+		&widget.ToolbarAction{Icon: theme.DocumentSaveIcon(), OnActivated: e.fileSave},
 	)
 }
 
+func (e *editor) buildMainMenu() *fyne.MainMenu {
+	recents := fyne.NewMenuItem("Open Recent", nil)
+	recents.ChildMenu = e.loadRecentMenu()
+
+	file := fyne.NewMenu("File",
+		fyne.NewMenuItem("Open ...", e.fileOpen),
+		fyne.NewMenuItem("Reset ...", e.fileReset),
+		fyne.NewMenuItem("Save", e.fileSave),
+	)
+
+	return fyne.NewMainMenu(file)
+}
 // BuildUI creates the main window of our pixel edit application
-func (e *editor) BuildUI() fyne.CanvasObject {
+func (e *editor) BuildUI(w fyne.Window) {
 	palette := newPalette(e)
 	toolbar := buildToolbar(e)
+	e.win = w
+	w.SetMainMenu(e.buildMainMenu())
 
-	return fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, e.status, palette, nil),
+	content := fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, e.status, palette, nil),
 		toolbar, e.status, palette, e.buildUI())
+	w.SetContent(content)
 }

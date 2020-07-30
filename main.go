@@ -32,7 +32,7 @@ func main() {
 
 	a := app.New()
 	w := a.NewWindow("Pixel Editor")
-	w.SetContent(e.BuildUI())
+	e.BuildUI(w)
 	w.Resize(fyne.NewSize(520, 320))
 
 	go loadFileArgs(e)

@@ -14,8 +14,8 @@ type testEditor struct {
 	fg color.Color
 }
 
-func (t *testEditor) BuildUI() fyne.CanvasObject {
-	return widget.NewLabel("Not used")
+func (t *testEditor) BuildUI(w fyne.Window) {
+	w.SetContent(widget.NewLabel("Not used"))
 }
 
 func (t *testEditor) LoadFile(fyne.URIReadCloser) {

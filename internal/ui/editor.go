@@ -29,6 +29,8 @@ type editor struct {
 	zoom int
 	fg   color.Color
 	tool api.Tool
+
+	win        fyne.Window
 }
 
 func (e *editor) PixelColor(x, y int) color.Color {
