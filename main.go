@@ -30,7 +30,7 @@ func loadFileArgs(e api.Editor) {
 func main() {
 	e := ui.NewEditor()
 
-	a := app.New()
+	a := app.NewWithID("io.fyne.pixeledit")
 	w := a.NewWindow("Pixel Editor")
 	e.BuildUI(w)
 	w.Resize(fyne.NewSize(520, 320))

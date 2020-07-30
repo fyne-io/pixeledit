@@ -31,6 +31,7 @@ type editor struct {
 	tool api.Tool
 
 	win        fyne.Window
+	recentMenu *fyne.Menu
 }
 
 func (e *editor) PixelColor(x, y int) color.Color {
@@ -156,6 +157,7 @@ func (e *editor) LoadFile(read fyne.URIReadCloser) {
 		return
 	}
 
+	e.addRecent(read.URI())
 	e.uri = read.URI().String()
 	e.img = fixEncoding(img)
 	e.status.SetText(fmt.Sprintf("File: %s | Width: %d | Height: %d",
