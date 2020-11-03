@@ -10,9 +10,11 @@ import (
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/storage"
-	_ "fyne.io/fyne/test" // load a test application
+	"fyne.io/fyne/test"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/fyne-io/pixeledit/internal/api"
 )
 
 func uriForTestFile(name string) fyne.URI {
@@ -43,8 +45,7 @@ func testFileWrite(name string) fyne.URIWriteCloser {
 
 func TestEditor_LoadFile(t *testing.T) {
 	file := testFile("8x8")
-	e := NewEditor()
-	e.LoadFile(file)
+	e := testEditorWithFile(file)
 
 	assert.Equal(t, color.RGBA{A: 255}, e.PixelColor(0, 0))
 	assert.Equal(t, color.RGBA{R: 255, G: 255, B: 255, A: 255}, e.PixelColor(1, 0))
@@ -52,8 +53,7 @@ func TestEditor_LoadFile(t *testing.T) {
 
 func TestEditor_Reset(t *testing.T) {
 	file := testFile("8x8")
-	e := NewEditor()
-	e.LoadFile(file)
+	e := testEditorWithFile(file)
 
 	assert.Equal(t, color.RGBA{A: 255}, e.PixelColor(0, 0))
 
@@ -83,9 +83,8 @@ func TestEditor_Save(t *testing.T) {
 		}
 	}()
 
-	e := NewEditor()
 	file := testFile("8x8-tmp")
-	e.LoadFile(file)
+	e := testEditorWithFile(file)
 
 	assert.Equal(t, color.RGBA{A: 255}, e.PixelColor(0, 0))
 
@@ -115,8 +114,7 @@ func TestEditor_SetFGColor(t *testing.T) {
 
 func TestEditor_PixelColor(t *testing.T) {
 	file := testFile("8x8")
-	e := NewEditor()
-	e.LoadFile(file)
+	e := testEditorWithFile(file)
 
 	assert.Equal(t, color.RGBA{A: 255}, e.PixelColor(0, 0))
 	assert.Equal(t, color.RGBA{R: 0, G: 0, B: 0, A: 0}, e.PixelColor(9, 9))
@@ -124,8 +122,7 @@ func TestEditor_PixelColor(t *testing.T) {
 
 func TestEditor_SetPixelColor(t *testing.T) {
 	file := testFile("8x8")
-	e := NewEditor()
-	e.LoadFile(file)
+	e := testEditorWithFile(file)
 
 	assert.Equal(t, color.RGBA{A: 255}, e.PixelColor(0, 0))
 	col := color.RGBA{R: 255, G: 255, B: 0, A: 128}
@@ -154,4 +151,12 @@ func TestEditor_isPNG(t *testing.T) {
 	assert.True(t, e.isPNG("test.png"))
 	assert.True(t, e.isPNG("BIG.PNG"))
 	assert.False(t, e.isPNG("wrong.ping"))
+}
+
+func testEditorWithFile(path fyne.URIReadCloser) api.Editor {
+	e := NewEditor()
+	e.(*editor).win = test.NewWindow(nil)
+	e.LoadFile(path)
+
+	return e
 }

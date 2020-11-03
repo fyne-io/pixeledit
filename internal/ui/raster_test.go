@@ -10,8 +10,7 @@ import (
 
 func TestInteractiveRaster_MinSize(t *testing.T) {
 	file := testFile("8x8")
-	e := NewEditor().(*editor)
-	e.LoadFile(file)
+	e := testEditorWithFile(file).(*editor)
 
 	rast := newInteractiveRaster(e)
 	e.drawSurface = rast
@@ -26,8 +25,7 @@ func TestInteractiveRaster_MinSize(t *testing.T) {
 
 func TestInteractiveRaster_locationForPositon(t *testing.T) {
 	file := testFile("8x8")
-	e := NewEditor().(*editor)
-	e.LoadFile(file)
+	e := testEditorWithFile(file).(*editor)
 
 	r := newInteractiveRaster(e)
 	x, y := r.locationForPosition(fyne.NewPos(2, 2))

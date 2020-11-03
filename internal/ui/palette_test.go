@@ -11,8 +11,7 @@ import (
 
 func TestDefaultZoom(t *testing.T) {
 	file := testFile("8x8")
-	e := NewEditor()
-	e.LoadFile(file)
+	e := testEditorWithFile(file)
 
 	p := newPalette(e.(*editor))
 	zoom := p.(*widget.Box).Children[0].(*fyne.Container).Objects[1].(*widget.Box).Children[1].(*widget.Label)
@@ -21,8 +20,7 @@ func TestDefaultZoom(t *testing.T) {
 
 func TestZoomIn(t *testing.T) {
 	file := testFile("8x8")
-	e := NewEditor()
-	e.LoadFile(file)
+	e := testEditorWithFile(file)
 	assert.Equal(t, 1, e.(*editor).zoom)
 
 	p := newPalette(e.(*editor))
