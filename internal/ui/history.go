@@ -3,8 +3,8 @@ package ui
 import (
 	"fmt"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/storage"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/storage"
 )
 
 const (

@@ -2,7 +2,7 @@
 
 package data
 
-import "fyne.io/fyne"
+import "fyne.io/fyne/v2"
 
 var pencil = &fyne.StaticResource{
 	StaticName: "pencil.svg",

@@ -3,10 +3,11 @@ package ui
 import (
 	"fmt"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 
 	"github.com/fyne-io/pixeledit/internal/api"
 	"github.com/fyne-io/pixeledit/internal/tool"
@@ -47,10 +48,10 @@ func newPalette(edit *editor) fyne.CanvasObject {
 		thisTool := item
 		icon = widget.NewButtonWithIcon(item.Name(), item.Icon(), func() {
 			for _, toolButton := range toolIcons {
-				toolButton.(*widget.Button).Style = widget.DefaultButton
+				toolButton.(*widget.Button).Importance = widget.MediumImportance
 				toolButton.Refresh()
 			}
-			icon.Style = widget.PrimaryButton
+			icon.Importance = widget.HighImportance
 			icon.Refresh()
 			edit.setTool(thisTool)
 		})
@@ -58,9 +59,9 @@ func newPalette(edit *editor) fyne.CanvasObject {
 	}
 
 	edit.setTool(tools[0])
-	toolIcons[0].(*widget.Button).Style = widget.PrimaryButton
+	toolIcons[0].(*widget.Button).Importance = widget.HighImportance
 
-	zoom := widget.NewHBox(
+	zoom := container.NewHBox(
 		widget.NewButtonWithIcon("", theme.ZoomOutIcon(), func() {
 			p.updateZoom(p.edit.zoom / 2)
 		}),
@@ -69,6 +70,6 @@ func newPalette(edit *editor) fyne.CanvasObject {
 			p.updateZoom(p.edit.zoom * 2)
 		}))
 
-	return widget.NewVBox(append([]fyne.CanvasObject{fyne.NewContainerWithLayout(layout.NewGridLayout(1),
+	return container.NewVBox(append([]fyne.CanvasObject{fyne.NewContainerWithLayout(layout.NewGridLayout(1),
 		widget.NewLabel("Tools"), zoom, edit.fgPreview)}, toolIcons...)...)
 }

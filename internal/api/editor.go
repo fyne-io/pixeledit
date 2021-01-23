@@ -3,7 +3,7 @@ package api
 import (
 	"image/color"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 // Editor describes the editing capabilities of a pixel editor

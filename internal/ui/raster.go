@@ -3,10 +3,10 @@ package ui
 import (
 	"image/color"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 type interactiveRaster struct {
@@ -26,7 +26,7 @@ func (r *interactiveRaster) SetMinSize(size fyne.Size) {
 	}
 
 	texScale := float32(pixWidth) / float32(size.Width) * float32(r.edit.zoom) / scale
-	size = fyne.NewSize(int(float32(size.Width)/texScale), int(float32(size.Height)/texScale))
+	size = fyne.NewSize(size.Width/texScale, size.Height/texScale)
 	r.min = size
 	r.Resize(size)
 }
@@ -57,7 +57,7 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 
 func (r *interactiveRaster) locationForPosition(pos fyne.Position) (int, int) {
 	c := fyne.CurrentApp().Driver().CanvasForObject(r.img)
-	x, y := pos.X, pos.Y
+	x, y := int(pos.X), int(pos.Y)
 	if c != nil {
 		x, y = c.PixelCoordinateForPosition(pos)
 	}

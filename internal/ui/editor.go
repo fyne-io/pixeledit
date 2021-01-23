@@ -8,10 +8,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/storage"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/storage"
+	"fyne.io/fyne/v2/widget"
 	"golang.org/x/image/draw"
 
 	"github.com/fyne-io/pixeledit/internal/api"
@@ -65,7 +66,7 @@ func (e *editor) SetFGColor(col color.Color) {
 }
 
 func (e *editor) buildUI() fyne.CanvasObject {
-	return widget.NewScrollContainer(e.drawSurface)
+	return container.NewScroll(e.drawSurface)
 }
 
 func (e *editor) setZoom(zoom int) {
@@ -105,8 +106,8 @@ func (e *editor) updateSizes() {
 		scale = c.Scale()
 	}
 	e.drawSurface.SetMinSize(fyne.NewSize(
-		int(float32(e.cacheWidth)/scale),
-		int(float32(e.cacheHeight)/scale)))
+		float32(e.cacheWidth)/scale,
+		float32(e.cacheHeight)/scale))
 
 	e.renderCache()
 }

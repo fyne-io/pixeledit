@@ -1,8 +1,8 @@
 package tool
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 
 	"github.com/fyne-io/pixeledit/internal/api"
 	"github.com/fyne-io/pixeledit/internal/data"

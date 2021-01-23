@@ -4,9 +4,9 @@ import (
 	"os"
 	"time"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/app"
-	"fyne.io/fyne/storage"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/storage"
 
 	"github.com/fyne-io/pixeledit/internal/api"
 	"github.com/fyne-io/pixeledit/internal/ui"

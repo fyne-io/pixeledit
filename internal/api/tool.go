@@ -1,7 +1,7 @@
 package api
 
 import (
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 // Tool represents any pixel editing tool that can be loaded into our editor
