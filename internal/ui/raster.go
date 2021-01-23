@@ -25,7 +25,7 @@ func (r *interactiveRaster) SetMinSize(size fyne.Size) {
 		scale = c.Scale()
 	}
 
-	texScale := float32(pixWidth) / float32(size.Width) * float32(r.edit.zoom) / scale
+	texScale := float32(pixWidth) / size.Width * float32(r.edit.zoom) / scale
 	size = fyne.NewSize(size.Width/texScale, size.Height/texScale)
 	r.min = size
 	r.Resize(size)

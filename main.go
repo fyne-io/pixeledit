@@ -18,8 +18,7 @@ func loadFileArgs(e api.Editor) {
 	}
 
 	time.Sleep(time.Second / 3) // wait for us to be shown before loading so scales are correct
-	uriStr := "file://" + os.Args[1]
-	read, err := storage.OpenFileFromURI(storage.NewURI(uriStr))
+	read, err := storage.Reader(storage.NewFileURI(os.Args[1]))
 	if err != nil {
 		fyne.LogError("Unable to open file \""+os.Args[1]+"\"", err)
 		return

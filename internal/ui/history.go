@@ -16,10 +16,11 @@ func (e *editor) loadRecent() []fyne.URI {
 	pref := fyne.CurrentApp().Preferences()
 	count := pref.Int(recentCountKey)
 
-	recent := []fyne.URI{}
+	var recent []fyne.URI
 	for i := 0; i < count; i++ {
-		key := fmt.Sprint(recentFormatKey, i)
-		recent = append(recent, storage.NewURI(pref.String(key)))
+		key := fmt.Sprintf(recentFormatKey, i)
+		u, _ := storage.ParseURI(pref.String(key))
+		recent = append(recent, u)
 	}
 
 	return recent
@@ -36,7 +37,7 @@ func (e *editor) addRecent(u fyne.URI) {
 
 	pref.SetInt(recentCountKey, len(recent))
 	for i, uri := range recent {
-		key := fmt.Sprint(recentFormatKey, i)
+		key := fmt.Sprintf(recentFormatKey, i)
 		pref.SetString(key, uri.String())
 	}
 

@@ -171,7 +171,8 @@ func (e *editor) Reload() {
 		return
 	}
 
-	read, err := storage.OpenFileFromURI(storage.NewURI(e.uri))
+	u, _ := storage.ParseURI(e.uri)
+	read, err := storage.Reader(u)
 	if err != nil {
 		fyne.LogError("Unable to open file \""+e.uri+"\"", err)
 		return
@@ -184,12 +185,12 @@ func (e *editor) Save() {
 		return
 	}
 
-	uri := storage.NewURI(e.uri)
+	uri, _ := storage.ParseURI(e.uri)
 	if !e.isSupported(uri.Extension()) {
 		fyne.LogError("Save only supports PNG", nil)
 		return
 	}
-	write, err := storage.SaveFileToURI(uri)
+	write, err := storage.Writer(uri)
 	if err != nil {
 		fyne.LogError("Error opening file to replace", err)
 		return

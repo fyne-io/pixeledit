@@ -5,7 +5,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
@@ -70,6 +69,6 @@ func newPalette(edit *editor) fyne.CanvasObject {
 			p.updateZoom(p.edit.zoom * 2)
 		}))
 
-	return container.NewVBox(append([]fyne.CanvasObject{fyne.NewContainerWithLayout(layout.NewGridLayout(1),
-		widget.NewLabel("Tools"), zoom, edit.fgPreview)}, toolIcons...)...)
+	return container.NewVBox(append([]fyne.CanvasObject{container.NewGridWithColumns(1),
+		widget.NewLabel("Tools"), zoom, edit.fgPreview}, toolIcons...)...)
 }
