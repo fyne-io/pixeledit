@@ -8,12 +8,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/image/draw"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
-	"golang.org/x/image/draw"
 
 	"github.com/fyne-io/pixeledit/internal/api"
 )
@@ -225,7 +226,9 @@ func (e *editor) isPNG(path string) bool {
 // NewEditor creates a new pixel editor that is ready to have a file loaded
 func NewEditor() api.Editor {
 	fgCol := color.Black
-	edit := &editor{zoom: 1, fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), status: newStatusBar()}
+	preview := canvas.NewRectangle(fgCol)
+	preview.SetMinSize(fyne.NewSize(1, 32))
+	edit := &editor{zoom: 1, fg: fgCol, fgPreview: preview, status: newStatusBar()}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit
